@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+.setup/
+.env
+.env.*
+*.local
+supabase/.temp/
+supabase/.branches/
+package-lock.json
