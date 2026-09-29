@@ -4,13 +4,38 @@
 - Reference: `ceopxrjkyqazccuipnlx`
 - API URL: `https://ceopxrjkyqazccuipnlx.supabase.co`
 - Local app origin: `http://127.0.0.1:5173`
-- Hosted app origin: `https://reminder.free.bg`
+- Vercel production origin: `https://recurring-reminder.vercel.app`
+
+## Vercel deployment
+
+The frontend is deployed to the `dapsy/reminder-pwa` Vercel project. Its production
+environment contains only the three public `VITE_` settings. `vercel.json` configures
+the Vite build, SPA routing, and service-worker/manifest cache revalidation.
+`.vercelignore` excludes local environment files and Supabase server files from uploads.
+
+Supabase Auth's hosted Site URL is `https://recurring-reminder.vercel.app`. Its redirect
+allowlist includes `/auth`, `/auth?recovery=1`, and `/profile` on that origin, while
+retaining the existing local redirects. The deployed
+`notification-action` function also permits the exact Vercel production origin.
+Other Vercel preview origins are not automatically allowed.
+
+Deploy frontend updates with `npx vercel deploy --prod` after `npm run check`.
+Deploy notification endpoint updates with its shared import map:
+
+```powershell
+npx supabase functions deploy notification-action --project-ref ceopxrjkyqazccuipnlx --import-map supabase/functions/deno.json
+```
+
+The local Vercel link and authentication files are ignored by Git. Commit the deployment
+configuration and source changes to preserve them for future Git-based deployments.
+
+## Existing setup
 
 Browser configuration is stored in the ignored root `.env`. Push server secrets are stored in the ignored `supabase/.env.local`; keep this file private and backed up securely. Never copy its private VAPID key or scheduler secret into a `VITE_` variable.
 
-The project supports local frontend development and `https://reminder.free.bg`. For other deployments, add the exact origin to notification-action's allowed origins and the Auth redirect allowlist, then rebuild the frontend with the same Supabase URL/public key/public VAPID key.
+The project supports local frontend development and `https://recurring-reminder.vercel.app`. For other deployments, add the exact origin to notification-action's allowed origins and the Auth redirect allowlist, then rebuild the frontend with the same Supabase URL/public key/public VAPID key.
 
-Use the local app at **127.0.0.1:5173**, **localhost:5173**, or the hosted HTTPS origin. Notification action CORS permits both loopback hostnames when `APP_ORIGIN` is local, with the configured protocol and port, plus the explicit hosted origin `https://reminder.free.bg`. No wildcard origins are allowed. New notification links are relative paths and open on the subscribing service worker's origin.
+Use the local app at **127.0.0.1:5173**, **localhost:5173**, or the hosted HTTPS origin. Notification action CORS permits both loopback hostnames when `APP_ORIGIN` is local, with the configured protocol and port, plus the explicit hosted origin `https://recurring-reminder.vercel.app`. No wildcard origins are allowed. New notification links are relative paths and open on the subscribing service worker's origin.
 
 The initial migration is recorded as version `202609160001`. Further database changes should be added as new SQL migrations. Do not rerun the initial migration against the configured project.
 

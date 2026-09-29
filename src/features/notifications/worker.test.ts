@@ -123,12 +123,14 @@ describe('service worker notification behavior', () => {
     expect(openWindow).toHaveBeenCalledWith('http://localhost:5173/reminders/id/edit');
   });
   it('opens relative notification links on the hosted subscription origin', async () => {
-    workerLocation.origin = 'https://reminder.free.bg';
+    workerLocation.origin = 'https://recurring-reminder.vercel.app';
     await emit('notificationclick', {
       action: '',
       notification: { data: { ...payload, url: '/reminders/id/edit' }, close: vi.fn() },
     });
-    expect(openWindow).toHaveBeenCalledWith('https://reminder.free.bg/reminders/id/edit');
+    expect(openWindow).toHaveBeenCalledWith(
+      'https://recurring-reminder.vercel.app/reminders/id/edit',
+    );
   });
   it('does not translate a loopback URL on a different port', async () => {
     workerLocation.origin = 'http://localhost:5173';

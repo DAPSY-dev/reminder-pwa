@@ -1,0 +1,9 @@
+.git
+.setup
+.env
+.env.*
+*.local
+supabase
+node_modules
+dist
+coverage

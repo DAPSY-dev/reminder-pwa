@@ -45,24 +45,27 @@ async function endpoint(appOrigin = 'http://127.0.0.1:5173', fail = false) {
   };
 }
 describe('notification action origin handling', () => {
-  it.each(['http://localhost:5173', 'http://127.0.0.1:5173', 'https://reminder.free.bg'])(
-    'accepts preflight and action from %s',
-    async (origin) => {
-      const action = await endpoint();
-      const preflight = await action.request(origin);
-      expect(preflight.status).toBe(204);
-      expect(preflight.headers.get('Access-Control-Allow-Origin')).toBe(origin);
-      expect((await action.request(origin, 'POST')).status).toBe(200);
-      expect(action.rpc).toHaveBeenCalledOnce();
-    },
-  );
+  it.each([
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'https://recurring-reminder.vercel.app',
+  ])('accepts preflight and action from %s', async (origin) => {
+    const action = await endpoint();
+    const preflight = await action.request(origin);
+    expect(preflight.status).toBe(204);
+    expect(preflight.headers.get('Access-Control-Allow-Origin')).toBe(origin);
+    expect((await action.request(origin, 'POST')).status).toBe(200);
+    expect(action.rpc).toHaveBeenCalledOnce();
+  });
   it.each([
     'http://localhost:5174',
     'https://evil.example',
     'http://localhost.evil.example:5173',
-    'http://reminder.free.bg',
-    'https://reminder.free.bg.evil.example',
-    'https://other.free.bg',
+    'http://recurring-reminder.vercel.app',
+    'https://retired.example',
+    'https://untrusted.example',
+    'https://recurring-reminder.vercel.app.evil.example',
+    'https://other.vercel.app',
   ])('rejects %s without applying an action', async (origin) => {
     const action = await endpoint();
     expect((await action.request(origin, 'POST')).status).toBe(403);

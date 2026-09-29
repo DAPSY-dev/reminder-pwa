@@ -5,7 +5,7 @@ Deno.serve(async (request) => {
   try {
     const origin = request.headers.get('Origin');
     const expected = new URL(secret('APP_ORIGIN'));
-    const allowed = new Set([expected.origin, 'https://reminder.free.bg']);
+    const allowed = new Set([expected.origin, 'https://recurring-reminder.vercel.app']);
     // The two local development hostnames have separate service worker origins.
     if (['localhost', '127.0.0.1'].includes(expected.hostname)) {
       const alias = new URL(expected);
